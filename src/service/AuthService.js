@@ -2,7 +2,7 @@ import Api from "./Api"
 
 export default {
     login: (credenciales) => {
-        return Api().post("/passport/login", credenciales);
+        return Api().post("/v1/auth/login", credenciales);
     },
     registro: (datos) => {
         return Api().post("/v1/auth/register", datos);
