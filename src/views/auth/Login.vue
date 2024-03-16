@@ -21,6 +21,7 @@
 import { ref } from 'vue' 
 import authService from "./../../service/AuthService"
 import { useRouter } from 'vue-router'
+import ability from '../../casl/ability';
 
 //const titulo = ref('Hola Mundo con Composition API');
 const router = useRouter()
@@ -35,7 +36,9 @@ const funIngresar = async (e) => {
 
         console.log(data);
         localStorage.setItem("token", data.access_token)
+        localStorage.setItem("permisos", JSON.stringify(data.user.permisos))
 
+        ability.update(data.user.permisos)
         router.push({name: 'Admin'})
 
         //alert("Bienvenido")

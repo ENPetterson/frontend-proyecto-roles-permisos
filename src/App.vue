@@ -18,5 +18,7 @@ import HelloWorld from './components/HelloWorld.vue'
     </div>
   </header-->
 
+  <RouterLink to="/">Home</RouterLink> |
+  <RouterLink to="/login">Ingresar</RouterLink>
   <RouterView />
 </template>

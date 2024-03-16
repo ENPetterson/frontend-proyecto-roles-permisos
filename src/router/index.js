@@ -4,14 +4,15 @@ import Login from '../views/auth/Login.vue'
 import Admin from '../views/admin/Admin.vue'
 import Perfil from '../views/admin/Perfil.vue'
 import AppLayout from '../layout/AppLayout.vue'
+import Inicio from '../views/Inicio.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView
+      name: 'inicio',
+      component: Inicio
     },
     {
       path: '/about',
@@ -45,7 +46,7 @@ const router = createRouter({
           },
         },
         {
-          path: '/perfil',
+          path: 'perfil',
           name: 'perfil',
           component: Perfil,
           meta: {
@@ -53,7 +54,7 @@ const router = createRouter({
           },
         },
         {
-          path: '/usuario',
+          path: 'usuario',
           name: 'usuario',
           component: () => import('../views/admin/usuario/Usuario.vue'),
           meta: {
@@ -75,7 +76,7 @@ router.beforeEach((to, from, next) => {
   }
 
   if(to.meta.redirectIfAuth && token) {
-    return next({name: 'admin'})
+    return next({name: 'Admin'})
   }
 
   return next();

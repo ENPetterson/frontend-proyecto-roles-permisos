@@ -1,17 +1,20 @@
 <template>
     <h1>Gestion Usuarios</h1>
+ 
+    <div v-if="$can('store', 'user')">
+        <label for="">Ingresar Nombre</label>
+        <input type="text" v-model="usuario.name">
+        <br>
+        <label for="">Ingresar Email</label>
+        <input type="email" v-model="usuario.email">
+        <br>
+        <label for="">Ingresar Contraseña</label>
+        <input type="password" v-model="usuario.password">
+        <br>
+        <button type="button" @click="guardarUsuario()">Guardar Usuario</button>
+    </div>
 
-    <label for="">Ingresar Nombre</label>
-    <input type="text" v-model="usuario.name">
-    <br>
-    <label for="">Ingresar Email</label>
-    <input type="email" v-model="usuario.email">
-    <br>
-    <label for="">Ingresar Contraseña</label>
-    <input type="password" v-model="usuario.password">
-    <br>
-    <button type="button" @click="guardarUsuario()">Guardar Usuario</button>
-    <table border="1">
+    <table border="1" v-if="$can('index', 'user')">
         <thead>
             <tr>
                 <td>Id</td>
@@ -28,8 +31,8 @@
                 <td>{{ u.email }}</td>
                 <td>{{ u.created_at }}</td>
                 <td>
-                    <button type="button" @click="editarUsuario(u)">Editar</button>
-                    <button type="button" @click="eliminarUsuario(u)">Eliminar</button>
+                    <button type="button" @click="editarUsuario(u)" v-if="$can('update', 'user')">Editar</button>
+                    <button type="button" @click="eliminarUsuario(u)" v-if="$can('delete', 'user')">Eliminar</button>
                 </td>
             </tr>
         </tbody>
@@ -41,6 +44,10 @@
 
 import { ref, onMounted } from "vue";
 import usuarioService from "./../../../service/UsuarioService.js"
+
+//import ability from "../../../casl/ability"
+//import { useAbility } from '@casl/vue';
+//const { can } = useAbility();
 
 // Declaracion de variables o constantes o estados
 const usuarios = ref([])
