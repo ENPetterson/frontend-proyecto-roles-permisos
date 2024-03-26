@@ -1,19 +1,39 @@
 <template>
+  <div>
     <h1>Gestion Usuarios</h1>
- 
-    <div v-if="$can('store', 'user')">
-        <label for="">Ingresar Nombre</label>
-        <input type="text" v-model="usuario.name">
-        <br>
-        <label for="">Ingresar Email</label>
-        <input type="email" v-model="usuario.email">
-        <br>
-        <label for="">Ingresar Contraseña</label>
-        <input type="password" v-model="usuario.password">
-        <br>
-        <button type="button" @click="guardarUsuario()">Guardar Usuario</button>
-    </div>
 
+    <Button label="Nuevo usuario" icon="pi pi-external-link" @click="visible = true" />
+    <input tyle="text" @keyup.enter="buscarUsuario()" v-model="q">
+    <DataTable :value="usuarios" tableStyle="min-width: 50rem">
+        <Column field="id" header="ID"></Column>
+        <Column field="name" header="Nombre"></Column>
+        <Column field="email" header="Correo electronico"></Column>
+        <Column field="roles" header="Roles">
+            <template #body="slotProps">
+                  <ul>
+                    <li v-for="rol in slotProps.data.roles" :key="rol.id">{{ rol.nombre }}</li>
+                  </ul>
+            </template> 
+        </Column>
+        <Column field="created_at" header="Creado En"></Column>
+
+        <Column headerStyle="min-width: 10rem;">
+            <template #body="slotProps">
+                <Button
+                    icon="pi pi-pencil"
+                    class="p-button-rounded p-button-success mr-2"
+                    @click="editarUsuario(slotProps.data)"
+                />
+                <Button
+                    icon="pi pi-trash"
+                    class="p-button-rounded p-button-warning mt-2"
+                    @click="confirmDeleteProduct(slotProps.data)"
+                />
+            </template> 
+        </Column>
+    </DataTable>
+
+    <!--
     <table border="1" v-if="$can('index', 'user')">
         <thead>
             <tr>
@@ -36,7 +56,30 @@
                 </td>
             </tr>
         </tbody>
-    </table>
+    </table> 
+    -->
+ </div>
+
+ <Dialog v-model:visible="visible" modal header="Usuarios" :style="{ width: '50vw'}" class="p-fluid" >
+    <div v-if="$can('store', 'user')">
+        <div class="field">
+            <label for="name">Ingresar Nombre:</label>
+            <InputText id="name" v-model.trim="usuario.name" required="true" autofocus />
+        </div>
+        <br />
+        <div class="field">
+            <label for="email">Ingresar Correo:</label>
+            <InputText id="email" v-model.trim="usuario.email" required="true" autofocus />
+        </div>
+        <br />
+        <div class="field">
+            <label for="pass">Ingresar Contraseña:</label>
+            <InputText id="pass" v-model.trim="usuario.password" required="true" autofocus />
+        </div>
+        <br />
+        <button type="button" @click="guardarUsuario()">Guardar Usuario</button>
+    </div>
+ </Dialog>
 </template>
 
 <script setup>
@@ -45,6 +88,9 @@
 import { ref, onMounted } from "vue";
 import usuarioService from "./../../../service/UsuarioService.js"
 
+const visible = ref(false);
+
+const q = ref('')
 //import ability from "../../../casl/ability"
 //import { useAbility } from '@casl/vue';
 //const { can } = useAbility();
@@ -66,18 +112,20 @@ const getUsuarios = async () => {
 
 const guardarUsuario = async () => {
     if(usuario.value.id) {
-        await usuarioService.modificar(usuario.value.id, usuario.value)
+        await usuarioService.modificar(usuario.value.id, usuario.value);
     } else {
-        await usuarioService.guardar(usuario.value)
+        await usuarioService.guardar(usuario.value);
     }
 
-    usuario.value = {name: "", email: "", password: ""}
-    getUsuarios()
+    usuario.value = {name: "", email: "", password: ""};
+    visible.value = false
+    getUsuarios();
 }
 
 const editarUsuario = (us) => {
 
     usuario.value = us;
+    visible.value = true
 }
 
 const eliminarUsuario = async (us) => {
@@ -92,5 +140,12 @@ const eliminarUsuario = async (us) => {
         }
     }
 
+};
+
+const buscarUsuario = async () => {
+    const {data} = await usuarioService.listar(q.value)
+    usuarios.value = data.data
 }
+
+
 </script>

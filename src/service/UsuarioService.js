@@ -1,8 +1,8 @@
 import Api from "./Api" //Conexion al archivo Api.js por medio de Axios
 
 export default {
-    listar() {
-        return Api().get("/users");
+    listar(q='') {
+        return Api().get("/users?q="+q);
     },
     guardar(datos) {
         return Api().post("/users", datos);
@@ -13,7 +13,7 @@ export default {
     modificar(id, datos) {
         return Api().put(`/users/${id}`, datos);
     },
-    modificar(id) {
+    eliminar(id) {
         return Api().delete(`/users/${id}`);
     },
 
