@@ -5,6 +5,7 @@ import Admin from '../views/admin/Admin.vue'
 import Perfil from '../views/admin/Perfil.vue'
 import AppLayout from '../layout/AppLayout.vue'
 import Inicio from '../views/Inicio.vue'
+import { canNavigate } from '@/casl/routeProtection'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,7 +28,9 @@ const router = createRouter({
       name: 'Login',
       component: Login,
       meta: {
-        redirectIfAuth: true
+        redirectIfAuth: true,
+        resource: 'auth',
+        action: 'show'
       }
     },
     {
@@ -42,7 +45,9 @@ const router = createRouter({
           name: 'Admin',
           component: Admin,
           meta: {
-            requireAuth: true
+            requireAuth: true,
+            resource: 'auth',
+            action: 'show'
           },
         },
         {
@@ -50,7 +55,9 @@ const router = createRouter({
           name: 'perfil',
           component: Perfil,
           meta: {
-            requireAuth: true
+            requireAuth: true,
+            resource: 'perfil',
+            action: 'index'
           },
         },
         {
@@ -58,7 +65,9 @@ const router = createRouter({
           name: 'usuario',
           component: () => import('../views/admin/usuario/Usuario.vue'),
           meta: {
-            requireAuth: true
+            requireAuth: true,
+            resource: 'user',
+            action: 'index'
           },
         },
         {
@@ -66,15 +75,30 @@ const router = createRouter({
           name: 'role',
           component: () => import('../views/admin/role/Role.vue'),
           meta: {
-            requireAuth: true
+            requireAuth: true,
+            resource: 'user',
+            action: 'index'
           },
         }
       ]
     },
     {
+      path: '/recuperar-password',
+      name: 'RecuperarPassword',
+      component: () => import('../views/auth/RecuperarPassword.vue'),
+    },
+    {
       path: '/reset-password',
       name: 'ResetPassword',
       component: () => import('../views/auth/ResetPassword.vue'),
+    },
+    {
+      path: '/no-autorizado',
+      name: 'NoAutorizado',
+      component: () => import('../views/errors/NoAutorizado.vue'),
+      meta: {
+        resource: 'auth'
+      }
     },
     {
       path: '/:pathMatch(.*)*',
@@ -86,6 +110,15 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   let token = localStorage.getItem("token");
+
+  if(!canNavigate(to)){
+    console.log("No tiene permisos");
+    if(!token) {
+      return next({name: 'Login'})
+    }
+    // si NO tengo permisos
+    return next({name: 'NoAutorizado'});
+  }
 
   if(to.meta.requireAuth) {
     if(!token)

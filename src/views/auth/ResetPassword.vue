@@ -13,12 +13,15 @@
 
         <label for="password1" class="block text-900 font-medium text-xl mb-2">Repetir Contraseña</label>
         <Password id="password1" v-model="datos.password_confirmation" placeholder="Contraseña" :toggleMask="true" class="w-full mb-3" inputClass="w-full" :inputStyle="{ padding: '1rem' }"></Password>
+      
+        <button @click="funGuardarCambios()">Reestablecer Contraseña</button>
     </div>
 
 </template>
 
 <script setup>
 
+import AuthService from '@/service/AuthService';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -27,7 +30,15 @@ const route = useRoute();
 const datos = ref({token: ""})
 
 onMounted(() => {
-    datos.value.token = route.query.token
+    datos.value.token = route.query.token;
 })
+
+
+const funGuardarCambios = async () => {
+    const {data} = await AuthService.resetPassword(datos.value)
+    console.log(data);
+
+    alert("Contraseña Actualizada");
+}
 
 </script>

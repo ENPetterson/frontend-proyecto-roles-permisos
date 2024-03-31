@@ -2,7 +2,7 @@
   <div>
     <h1>Gestion Usuarios</h1>
 
-    <Button label="Nuevo usuario" icon="pi pi-external-link" @click="visible = true" />
+    <Button v-if="$can('store', 'user')" label="Nuevo usuario" icon="pi pi-external-link" @click="visible = true" />
     <input tyle="text" @keyup.enter="buscarUsuario()" v-model="q">
     <DataTable :value="usuarios" tableStyle="min-width: 50rem">
         <Column field="id" header="ID"></Column>
@@ -20,11 +20,13 @@
         <Column headerStyle="min-width: 10rem;">
             <template #body="slotProps">
                 <Button
+                    v-if="$can('update', 'user')"
                     icon="pi pi-pencil"
                     class="p-button-rounded p-button-success mr-2"
                     @click="editarUsuario(slotProps.data)"
                 />
                 <Button
+                    v-if="$can('delete', 'user')"
                     icon="pi pi-trash"
                     class="p-button-rounded p-button-warning mt-2"
                     @click="confirmDeleteProduct(slotProps.data)"

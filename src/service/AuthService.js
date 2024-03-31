@@ -4,7 +4,7 @@ export default {
     login: (credenciales) => {
         return Api().post("/v1/auth/login", credenciales);
     },
-    registro: (datos) => {
+    registro: function(datos) {
         return Api().post("/v1/auth/register", datos);
     },
     perfil: () => {
@@ -12,5 +12,11 @@ export default {
     },
     logout: () => {
         return Api().post("/v1/auth/logout");
+    },
+    recuperarPassword: (datos) => {
+        return Api().post("/reset-password", datos);
+    },
+    resetPassword: (datos) => {
+        return Api().post("/cambio-password", datos);
     }
 }
