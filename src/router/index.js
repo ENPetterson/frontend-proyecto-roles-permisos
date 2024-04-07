@@ -79,6 +79,26 @@ const router = createRouter({
             resource: 'user',
             action: 'index'
           },
+        },
+        {
+          path: 'role/:id',
+          name: 'roleEdit',
+          component: () => import('../views/admin/role/RoleEdit.vue'),
+          meta: {
+            requireAuth: true,
+            resource: 'user',
+            action: 'index'
+          },
+        },
+        {
+          path: 'permiso',
+          name: 'Permiso',
+          component: () => import('../views/admin/role/Permiso.vue'),
+          meta: {
+            requireAuth: true,
+            resource: 'auth',
+            action: 'show'
+          },
         }
       ]
     },

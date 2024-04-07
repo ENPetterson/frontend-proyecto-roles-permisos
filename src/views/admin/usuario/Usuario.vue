@@ -79,6 +79,12 @@
             <InputText id="pass" v-model.trim="usuario.password" required="true" autofocus />
         </div>
         <br />
+
+        <div class="field">
+            <MultiSelect v-model="selectedRol" display="chip" :options="roles" optionLabel="nombre" placeholder="Seleccionar Rol"
+            :maxSelectedLabels="5" class="w-full md:w-20rem" />
+        </div>
+        <br />
         <button type="button" @click="guardarUsuario()">Guardar Usuario</button>
     </div>
  </Dialog>
@@ -89,10 +95,13 @@
 
 import { ref, onMounted } from "vue";
 import usuarioService from "./../../../service/UsuarioService.js"
+import roleService from "./../../../service/RoleService.js"
 
 const visible = ref(false);
 
 const q = ref('')
+const roles = ref([])
+const selectedRol = ref([])
 //import ability from "../../../casl/ability"
 //import { useAbility } from '@casl/vue';
 //const { can } = useAbility();
@@ -103,7 +112,8 @@ const usuario = ref({name: "", email: "", password: ""});
 
 // Ciclo de vida de un componente
 onMounted(() => {
-    getUsuarios()
+    getUsuarios();
+    getRoles();
 })
 
 // Metodos o funciones
@@ -112,9 +122,14 @@ const getUsuarios = async () => {
     usuarios.value = data.data
 }
 
+const getRoles = async () => {
+    const {data} = await roleService.listar()
+    roles.value = data
+}
+
 const guardarUsuario = async () => {
     if(usuario.value.id) {
-        await usuarioService.modificar(usuario.value.id, usuario.value);
+        await usuarioService.modificar(usuario.value.id, usuario.value, selectedRol.value);
     } else {
         await usuarioService.guardar(usuario.value);
     }
@@ -126,8 +141,14 @@ const guardarUsuario = async () => {
 
 const editarUsuario = (us) => {
 
+    selectedRol.value = [];
     usuario.value = us;
     visible.value = true
+
+    us.roles.forEach(ro => {
+        const {pivot, ...rest} = ro
+        selectedRol.value.push(rest)
+    });
 }
 
 const eliminarUsuario = async (us) => {
